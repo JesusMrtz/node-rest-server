@@ -21,7 +21,7 @@ let urlDataBase;
 if (process.env.NODE_ENV === 'dev') {
     urlDataBase = 'mongodb://localhost:27017/coffee';
 } else {
-    urlDataBase = process.env.NODE_ENV.MONGO_URL;
+    urlDataBase = process.env.MONGO_URL;
 }
 
 process.env.URLDB = urlDataBase;
