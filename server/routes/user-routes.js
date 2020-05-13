@@ -2,11 +2,12 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
 const User = require('../models/User');
+const { verifyToken, verifyTokenUseAdmin } = require('../middlewares/authentication');
 const app = express();
 
 
 
-app.get('/users', function(request, response) {
+app.get('/users', verifyToken, (request, response) => {
     let skipData = Number(request.query.from) || 0;
     let limitData = Number(request.query.limit) || 5;
 
@@ -21,7 +22,7 @@ app.get('/users', function(request, response) {
                 });
             }
 
-            User.count({ status: true }, (error, countUser) => {
+            User.countDocuments({ status: true }, (error, countUser) => {
                 response.json({
                     ok: true,
                     data: userData,
@@ -31,7 +32,7 @@ app.get('/users', function(request, response) {
         });
 });
 
-app.post('/user', function(request, response) {
+app.post('/user', [verifyToken, verifyTokenUseAdmin], (request, response) => {
     let body = request.body;
 
     let user = new User({
@@ -56,7 +57,7 @@ app.post('/user', function(request, response) {
     });
 });
 
-app.put('/user/:id', function(request, response) {
+app.put('/user/:id', [verifyToken, verifyTokenUseAdmin], (request, response) => {
     let id = request.params.id;
     let body = _.pick(request.body, ['name', 'email', 'image', 'role', 'status']);
 
@@ -110,7 +111,7 @@ app.delete('/user/:id', function(request, response) {
 /**
  * Eliminado lógico
  */
-app.delete('/user/:id', function(request, response) {
+app.delete('/user/:id', [verifyToken, verifyTokenUseAdmin], (request, response) => {
     let id = request.params.id;
 
     User.findByIdAndUpdate(id, { status: false }, { new: true }, (error, userDB) => {
