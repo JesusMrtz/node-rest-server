@@ -38,8 +38,26 @@ let verifyTokenUseAdmin = (request, response, next) => {
     }
 };
 
+let verifyTokenByParameter = (request, response, next) => {
+    let token = request.query.token;
+
+    jwt.verify(token, process.env.SEED, (error, decoded) => {
+        if (error) {
+            return response.status(401).json({
+                ok: false,
+                error
+            });
+        }
+
+        request.user = decoded.data;
+
+        next();
+    });
+};
+
 
 module.exports = {
     verifyToken,
-    verifyTokenUseAdmin
+    verifyTokenUseAdmin,
+    verifyTokenByParameter
 };

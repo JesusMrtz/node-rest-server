@@ -17,6 +17,10 @@ const productSchema = new Schema({
         type: String,
         required: false
     },
+    image: {
+        type: String,
+        required: false
+    },
     status: {
         type: Boolean,
         required: true,
